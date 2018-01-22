@@ -4,6 +4,7 @@ var keys = require('./keys.js');
 var Twitter = require('twitter');
 var spotifykeys = require('./spotifykeys.js');
 var Spotify = require('node-spotify-api');
+var omdbkey = require('./omdbkeys.js');
 var inquirer = require('inquirer');
 var request = require('request');
 
@@ -49,7 +50,7 @@ var request = require('request');
 // 			spotify();
 // 			break;
 // 		case "movie-this":
-// 			// run omdb
+// 			omdb();
 // 			break;
 // 		case "do-what-it-says":
 // 			//default
@@ -75,7 +76,7 @@ var request = require('request');
 
 // 	client.get('statuses/user_timeline', params, function(error, tweets, response) {
 // 	  if (!error) {
-// 	  	console.log("Here are the latest tweets:");
+// 	  	console.log("---------------Here are the latest tweets---------------");
 // 	  	for (i = 0; i < (params.count); i++) {
 // 	  		console.log("");
 // 		    console.log("");
@@ -110,6 +111,7 @@ var request = require('request');
 	// 	}
 	// 	var songInfo = data.tracks.items;
 			
+	// 		console.log("---------------Song Search---------------");
 	// 	for (var j = 0; j < 5; j++) {
 	// 		console.log("");
 	// 		console.log("");
@@ -123,31 +125,35 @@ var request = require('request');
 	// });
 // }
 
+//initialize omdb
+// function omdb() {
 
+	input = process.argv.splice(3).join("+");
+	var queryURL = "https://www.omdbapi.com/?t=" + input + "&y=&plot=short&tomatoes=true&" + apikey;
 
-var input = process.argv.splice(3).join("+");
-var queryURL = "https://www.omdbapi.com/?t=" + input + "&y=&plot=short&apikey=40e9cece";
-
-request(queryURL, function (error, response, body) {
-
-	var movie = JSON.parse(body)
-	if (error) {
-  console.log('error:', error); // Print the error if one occurred
-	} else {
-	  console.log(movie); // Print the HTML for the Google homepage.
-		console.log("");
-		console.log("---------------Movie Search---------------");
-	  console.log("Title: " + movie.Title);
-	  console.log("Year: " + movie.Year);
-	  console.log("IMDB Rating: " + movie.Ratings[0].Value);
-	  console.log("Rotten Tomatoes Rating: " + movie.Ratings[1].Value);
-	 	console.log("Produced in: " + movie.Country);
-	  console.log("Language: " + movie.Language);
-	  console.log("Actors: " + movie.Actors);
-	  console.log("Plot: " + movie.Plot);
+	if (!input) {
+		console.log("If you haven't watched 'Mr. Nobody' then you should: "
+			+ "\nhttp://www.imdb.com/title/tt0485947"
+			+ " \nIt's on Netflix!");
+		queryUrl = "https://www.omdbapi.com/?t=Mr+Nobody&y=&plot=short&apikey=40e9cece";
 	}
+	request(queryURL, function (error, response, body) {
+		// console.log('error:', error); // Print the error if one occurred
+		var movie = JSON.parse(body);
 
-});
+		  console.log(movie); // Print the HTML for the Google homepage.
+			console.log("");
+			console.log("---------------Movie Search---------------");
+		  console.log("Title: " + movie.Title);
+		  console.log("Year: " + movie.Year);
+		  console.log("IMDB Rating: " + movie.imdbRating);
+		  console.log("Rotten Tomatoes Rating: " + movie.tomatoRating);
+		 	console.log("Produced in: " + movie.Country);
+		  console.log("Language: " + movie.Language);
+		  console.log("Actors: " + movie.Actors);
+		  console.log("Plot: " + movie.Plot);
+	});
+// }
 
 
 
