@@ -1,4 +1,4 @@
-// // Get keys from keys file
+// Get keys from keys file
 var fs = require('fs');
 var keys = require('./keys.js');
 var Twitter = require('twitter');
@@ -8,38 +8,39 @@ var omdbkey = require('./omdbkeys.js');
 var inquirer = require('inquirer');
 var request = require('request');
 
-
+// user inputs
 var command = process.argv[2];
-var input = process.argv.splice(3).join(" ");
+var input = process.argv;
+console.log("ling 14 ",input);
 
-console.log(input);
+// console.log(input);
 
-if (command === undefined) {
-	inquirer.prompt([
-	  // intial list of commands
-	  {
-	    type: "list",
-	    message: "What do you want to do?",
-	    choices: ["my-tweets", "spotify-this-song", "movie-this", "do-what-it-says"],
-	    name: "initial-command"
-	  },
-	  {
-	    type: "confirm",
-	    message: "Are you sure:",
-	    name: "confirm",
-	    default: true
-	  },
-	])
-	.then(function(inquirerResponse) {
-	 console.log(inquirerResponse.initial-command);
-	});
+// if (command === undefined) {
+// 	inquirer.prompt([
+// 	  // intial list of commands
+// 	  {
+// 	    type: "list",
+// 	    message: "What do you want to do?",
+// 	    choices: ["my-tweets", "spotify-this-song", "movie-this", "do-what-it-says"],
+// 	    name: "initial-command"
+// 	  },
+// 	  {
+// 	    type: "confirm",
+// 	    message: "Are you sure:",
+// 	    name: "confirm",
+// 	    default: true
+// 	  },
+// 	])
+// 	.then(function(inquirerResponse) {
+// 	 console.log(inquirerResponse.initial-command);
+// 	});
  
-else {
-	whichCommand(command);
-}
+// else {
+// 	whichCommand(command);
+// }
 
 
-function whichCommand(input) {
+// function whichCommand(input) {
 	switch(command) {
 		case "my-tweets":
 			twitter();
@@ -51,15 +52,15 @@ function whichCommand(input) {
 			omdb();
 			break;
 		case "do-what-it-says":
-			//default
+			doItSays();
 			break;
 		default:
 			console.log("Liri doesn't know what you want to do..");
 			break;
 	}
-}
+// }
 
-// function twitter() {
+function twitter() {
 	//set parameters
 	var params = {
 		screen_name: 'eq01234',
@@ -88,14 +89,16 @@ function whichCommand(input) {
 }
 
  
-//initialize spotify
+// //initialize spotify
 function spotify() {
 	var spotify = new Spotify(spotifykeys);
 
-	if (!input) {
-		input = "'The Sign' by Ace of Base"
+	songName = input.splice(3).join(" ");
+
+	if (!songName) {
+		songName = "'The Sign' by Ace of Base"
 	}
-	spotify.search({ type: 'track', query: input }, function(err, data) {
+	spotify.search({ type: 'track', query: songName }, function(err, data) {
 		if (err) {
 		  return console.log("There's either a typo or the song doesn't exist. Please try again.");
 		}
@@ -115,23 +118,23 @@ function spotify() {
 	});
 }
 
-//initialize omdb
+// //initialize omdb
 function omdb() {
+	console.log("123 ", input);
 
-	input = process.argv.splice(3).join("+");
-	var queryURL = "https://www.omdbapi.com/?t=" + input + "&y=&plot=short&tomatoes=true&" + apikey;
+	movieName = input.splice(3).join("+"); //for movie
 
-	if (!input) {
+	var queryURL = "https://www.omdbapi.com/?t=" + movieName + "&y=&plot=short&tomatoes=true&" + apikey;
+
+	if (!movieName) {
 		console.log("If you haven't watched 'Mr. Nobody' then you should: "
 			+ "\nhttp://www.imdb.com/title/tt0485947"
 			+ " \nIt's on Netflix!");
-		queryUrl = "https://www.omdbapi.com/?t=Mr+Nobody&y=&plot=short&apikey=40e9cece";
+		queryURL = "https://www.omdbapi.com/?t=mr+nobody&y=&plot=short&tomatoes=true&" + apikey;
 	}
 	request(queryURL, function (error, response, body) {
-		// console.log('error:', error); // Print the error if one occurred
+		console.log('error:', error); // Print the error if one occurred
 		var movie = JSON.parse(body);
-
-		  console.log(movie); // Print the HTML for the Google homepage.
 			console.log("");
 			console.log("---------------Movie Search---------------");
 		  console.log("Title: " + movie.Title);
@@ -146,6 +149,32 @@ function omdb() {
 			console.log("");
 	});
 }
+
+function doItSays() {
+
+	fs.readFile("random.txt", "utf8", function(error, data) {
+
+	  // If the code experiences any errors it will log the error to the console.
+	  if (error) {
+	    return console.log(error);
+	  }
+
+	  // We will then print the contents of data
+	  console.log(data);
+
+	  // Then split it by commas (to make it more readable)
+	  command = "node liri.js"
+	  var songName = data;
+
+	  // We will then re-display the content as an array for later use.
+	  console.log(command, songName);
+	  // spotify(command, input);
+	  debugger;
+
+	});
+}
+
+
 
 
 
