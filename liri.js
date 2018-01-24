@@ -11,7 +11,8 @@ var request = require('request');
 // user inputs
 var command = process.argv[2];
 var input = process.argv;
-console.log("ling 14 ",input);
+var songName = '';
+var data = '';
 
 // console.log(input);
 
@@ -33,8 +34,7 @@ console.log("ling 14 ",input);
 // 	])
 // 	.then(function(inquirerResponse) {
 // 	 console.log(inquirerResponse.initial-command);
-// 	});
- 
+// 	})
 // else {
 // 	whichCommand(command);
 // }
@@ -55,7 +55,13 @@ console.log("ling 14 ",input);
 			doItSays();
 			break;
 		default:
-			console.log("Liri doesn't know what you want to do..");
+			console.log("Hi, my name is Liri.");
+			console.log("Please use one of the following commands:");
+			console.log("'my-tweets'");
+			console.log("'spotify-this-song' 'song title'");
+			console.log("'movie-this' 'movie title'");
+			console.log("'do-what-it-says'");
+			console.log("");
 			break;
 	}
 // }
@@ -88,22 +94,27 @@ function twitter() {
 	});
 }
 
- 
 // //initialize spotify
-function spotify() {
+function spotify(data) {
 	var spotify = new Spotify(spotifykeys);
 
 	songName = input.splice(3).join(" ");
 
+	if (data != undefined) {
+		songName = data;	
+	}
+
 	if (!songName) {
 		songName = "'The Sign' by Ace of Base"
-	}
+	} 
 	spotify.search({ type: 'track', query: songName }, function(err, data) {
 		if (err) {
 		  return console.log("There's either a typo or the song doesn't exist. Please try again.");
 		}
+		// console.log("107 ",data.tracks);
 		var songInfo = data.tracks.items;
-			
+
+		// console.log("109 ", songInfo);
 			console.log("---------------Song Search---------------");
 		for (var j = 0; j < 5; j++) {
 			console.log("");
@@ -120,12 +131,10 @@ function spotify() {
 
 // //initialize omdb
 function omdb() {
-	console.log("123 ", input);
-
 	movieName = input.splice(3).join("+"); //for movie
-
 	var queryURL = "https://www.omdbapi.com/?t=" + movieName + "&y=&plot=short&tomatoes=true&" + apikey;
-
+	console.log(movieName);
+	console.log(queryURL);
 	if (!movieName) {
 		console.log("If you haven't watched 'Mr. Nobody' then you should: "
 			+ "\nhttp://www.imdb.com/title/tt0485947"
@@ -151,30 +160,15 @@ function omdb() {
 }
 
 function doItSays() {
-
 	fs.readFile("random.txt", "utf8", function(error, data) {
 
-	  // If the code experiences any errors it will log the error to the console.
 	  if (error) {
 	    return console.log(error);
 	  }
-
-	  // We will then print the contents of data
-	  console.log(data);
-
-	  // Then split it by commas (to make it more readable)
-	  command = "node liri.js"
-	  var songName = data;
-
-	  // We will then re-display the content as an array for later use.
-	  console.log(command, songName);
-	  // spotify(command, input);
-	  debugger;
-
+	  data = data.split(" ");
+	  data = data.splice(1, 50).join(" ");
+	  spotify(data);
 	});
 }
-
-
-
 
 
