@@ -14,33 +14,6 @@ var input = process.argv;
 var songName = '';
 var data = '';
 
-// console.log(input);
-
-// if (command === undefined) {
-// 	inquirer.prompt([
-// 	  // intial list of commands
-// 	  {
-// 	    type: "list",
-// 	    message: "What do you want to do?",
-// 	    choices: ["my-tweets", "spotify-this-song", "movie-this", "do-what-it-says"],
-// 	    name: "initial-command"
-// 	  },
-// 	  {
-// 	    type: "confirm",
-// 	    message: "Are you sure:",
-// 	    name: "confirm",
-// 	    default: true
-// 	  },
-// 	])
-// 	.then(function(inquirerResponse) {
-// 	 console.log(inquirerResponse.initial-command);
-// 	})
-// else {
-// 	whichCommand(command);
-// }
-
-
-// function whichCommand(input) {
 	switch(command) {
 		case "my-tweets":
 			twitter();
@@ -57,14 +30,40 @@ var data = '';
 		default:
 			console.log("Hi, my name is Liri.");
 			console.log("Please use one of the following commands:");
-			console.log("'my-tweets'");
-			console.log("'spotify-this-song' 'song title'");
-			console.log("'movie-this' 'movie title'");
-			console.log("'do-what-it-says'");
-			console.log("");
+			inquirer.prompt([
+			  // intial list of commands
+			  {
+			    type: "list",
+			    message: "What do you want to do?",
+			    choices: ["my-tweets", "spotify-this-song", "movie-this", "do-what-it-says"],
+			    name: "initial-command"
+			  },
+			  {
+			    type: "confirm",
+			    message: "Are you sure:",
+			    name: "confirm",
+			    default: true
+			  },
+			])
+			.then(function(inquirerResponse) {
+				command = inquirerResponse["initial-command"];
+				switch(command) {
+					case "my-tweets":
+						twitter();
+						break;
+					case "spotify-this-song":
+						spotify();
+						break;
+					case "movie-this":
+						omdb();
+						break;
+					case "do-what-it-says":
+						doItSays();
+						break;
+				}
+			})
 			break;
 	}
-// }
 
 function twitter() {
 	//set parameters
